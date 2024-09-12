@@ -12,6 +12,7 @@ import (
 type ExpenseService interface {
 	Create(expense *domain.Expense) error
 	GetById(id int) (*domain.Expense, error)
+	FetchAll() ([]domain.Expense, error)
 }
 
 type ExpenseHandler struct {
@@ -24,6 +25,7 @@ func NewExpenseHandler(e *echo.Echo, svc ExpenseService) {
 	}
 	e.POST("/expenses", handler.Store)
 	e.GET("/expenses/:id", handler.GetById)
+	e.GET("/expenses", handler.FetchAll)
 }
 
 func (h *ExpenseHandler) Store(c echo.Context) error {
@@ -51,4 +53,12 @@ func (h *ExpenseHandler) GetById(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusOK, expense)
+}
+
+func (h *ExpenseHandler) FetchAll(c echo.Context) error {
+	expenses, err := h.Service.FetchAll()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+	return c.JSON(http.StatusOK, expenses)
 }

@@ -43,3 +43,32 @@ func (e *ExpenseRepository) GetById(id int) (*domain.Expense, error) {
 	}
 	return &expense, nil
 }
+
+func (e *ExpenseRepository) FetchAll() ([]domain.Expense, error) {
+	stmt, err := e.Conn.Prepare("SELECT * FROM expenses")
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := stmt.Query()
+	if err != nil {
+		return nil, err
+	}
+
+	var expenses []domain.Expense
+	for rows.Next() {
+		var expense domain.Expense
+		err := rows.Scan(
+			&expense.Id,
+			&expense.Title,
+			&expense.Amount,
+			&expense.Note,
+			pq.Array(&expense.Tags),
+		)
+		if err != nil {
+			return nil, err
+		}
+		expenses = append(expenses, expense)
+	}
+	return expenses, nil
+}
