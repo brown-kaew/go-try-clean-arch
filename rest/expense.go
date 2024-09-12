@@ -8,7 +8,7 @@ import (
 )
 
 type ExpenseService interface {
-	Create(expense domain.Expense) error
+	Create(expense *domain.Expense) error
 }
 
 type ExpenseHandler struct {
@@ -25,14 +25,11 @@ func NewExpenseHandler(e *echo.Echo, svc ExpenseService) {
 
 func (h *ExpenseHandler) createNewExpenseHandler(c echo.Context) error {
 	var expense domain.Expense
-	err := c.Bind(&expense)
-	if err != nil {
+	if err := c.Bind(&expense); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
-	err = h.Service.Create(expense)
-	if err != nil {
-		return err
+	if err := h.Service.Create(&expense); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusCreated, expense)
-
 }

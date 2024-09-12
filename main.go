@@ -27,9 +27,9 @@ func main() {
 	if err != nil {
 		log.Fatal("failed to open connection to database", err)
 	}
-	// if err = dbConn.Ping(); err != nil {
-	// 	log.Fatal("failed to ping database ", err)
-	// }
+	if err = dbConn.Ping(); err != nil {
+		log.Fatal("failed to ping database ", err)
+	}
 
 	defer func() {
 		err := dbConn.Close()

@@ -15,16 +15,13 @@ func NewExpenseRepository(conn *sql.DB) *ExpenseRepository {
 	return &ExpenseRepository{Conn: conn}
 }
 
-func (e *ExpenseRepository) Create(expense domain.Expense) error {
+func (e *ExpenseRepository) Create(expense *domain.Expense) error {
 	sql := `
-	INSERT INTO
-		expenses (title, amount, note, tags)
-	VALUES
-		($1, $2, $3, $4) 
+	INSERT INTO expenses (title, amount, note, tags)
+	VALUES ($1, $2, $3, $4)
 	RETURNING id;
 	`
 	row := e.Conn.QueryRow(sql, expense.Title, expense.Amount, expense.Note, pq.Array(&expense.Tags))
-
 	if err := row.Scan(&expense.Id); err != nil {
 		return err
 	}

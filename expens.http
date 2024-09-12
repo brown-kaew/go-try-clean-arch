@@ -1,0 +1,11 @@
+
+### Create expense
+POST http://localhost:2565/expenses
+Content-Type: application/json
+
+{
+    "title": "strawberry smoothie",
+    "amount": 79,
+    "note": "night market promotion discount 10 bath",
+    "tags": ["food", "beverage"]
+}
