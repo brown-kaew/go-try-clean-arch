@@ -27,3 +27,19 @@ func (e *ExpenseRepository) Create(expense *domain.Expense) error {
 	}
 	return nil
 }
+
+func (e *ExpenseRepository) GetById(id int) (*domain.Expense, error) {
+	stmt, err := e.Conn.Prepare("SELECT * FROM expenses WHERE id=$1")
+	if err != nil {
+		return nil, err
+	}
+
+	row := stmt.QueryRow(id)
+
+	var expense domain.Expense
+	err = row.Scan(&expense.Id, &expense.Title, &expense.Amount, &expense.Note, pq.Array(&expense.Tags))
+	if err != nil {
+		return nil, err
+	}
+	return &expense, nil
+}
