@@ -9,7 +9,6 @@ services:
       - 2565:2565
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db/expenses-db?sslmode=disable
-      PORT: :2565
     depends_on:
       db:
         condition: service_healthy
